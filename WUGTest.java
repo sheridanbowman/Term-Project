@@ -15,6 +15,8 @@ public class WUGTest {
     int isVDeduction = 0;
     WUGraph g;
     Object[] wuVertArray;
+    //hello
+    //new
 
     System.out.println("Running vertex test.");
     System.out.println("Creating empty graph.");
