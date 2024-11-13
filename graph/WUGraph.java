@@ -6,6 +6,12 @@ package graph;
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
  * permitted.
  */
+public int vertexCount = 0;
+public int edgeCount = 0;
+
+//Vertex and Edge HashTable that hold the references to the actual vertex and the vertex pair object (for the edges)
+public HashTableChained vertexHashTable = new HashTableChained();
+public HashTableChained edgeHashTable = new HashTableChained();
 
 public class WUGraph {
 
@@ -21,14 +27,21 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int vertexCount();
+  //For both vertexCount and edgeCount, maybe we could have graph hold two int members, numEdges and numVertices thatare
+  //incremented and decremented during each addition of an edge or vertex. Might be tricky to account for shared / duplicate edges.
+  public int vertexCount() {
+      return vertexCount;
+	
+  }
 
   /**
    * edgeCount() returns the total number of edges in the graph.
    *
    * Running time:  O(1).
    */
-  public int edgeCount();
+  public int edgeCount() {
+	  return edgeCount;
+  }
 
   /**
    * getVertices() returns an array containing all the objects that serve
@@ -42,6 +55,8 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
+  //Note to self: Beginning at the first item in the DList, we need to somehow iterate through all the internalVertices, then retrieve the actual vertex
+  //We then place in an array
   public Object[] getVertices();
 
   /**
@@ -51,6 +66,9 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
+  //Note to self: When we add a new vertex to the graph, we need to pass it to the hashtable, and also add it to a linkedList of vertices.
+  //To do so, we take the vertex Object, store it inside of the hashtable, and then we use it to create a new internalVertex item.
+  //This internalVertex is then added to the current DList class member. Since internalVertex has a doubly linked list for edges, this should be good enough.
   public void addVertex(Object vertex);
 
   /**
@@ -60,6 +78,8 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
+  
+  
   public void removeVertex(Object vertex);
 
   /**
@@ -108,6 +128,7 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
+  //Could do something like, internalVertex.edgeList.insertFront......
   public void addEdge(Object u, Object v, int weight);
 
   /**
