@@ -1,38 +1,74 @@
 /* WUGraph.java */
 
+/*
+David First 5:
+    Wugraph construct
+    vertexCount
+    edgeCount
+    getVerticies
+    (Also, the Internal Vertex Class)
+Sheridan
+    Addvertex / doneish
+    Removevertex / wip
+    Isvertex / done
+    Degree
+    Getneighbors
+Ethan
+    addEdge
+    removeEdge
+    isEdge
+    weight
+ */
+
+
 package graph;
+
+import list.DList;
+import dict.HashTableChained;
 
 /**
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
  * permitted.
  */
-
 public class WUGraph {
+
+  public int vertexCount = 0;
+  public int edgeCount = 0;
+
+  //Vertex and Edge HashTable that hold the references to the actual vertex and the vertex pair object (for the edges)
+  public HashTableChained vertexHashTable = new HashTableChained();
+  public HashTableChained edgeHashTable = new HashTableChained();
+
+  public DList internalVertices = new DList();
 
   /**
    * WUGraph() constructs a graph having no vertices or edges.
-   *
    * Running time:  O(1).
    */
-  public WUGraph();
+  public WUGraph() {
+    // Can be empty on init, filling it with other methods
+  };
+
 
   /**
    * vertexCount() returns the number of vertices in the graph.
-   *
    * Running time:  O(1).
    */
 
-  
-  public int vertexCount(); 
+  //For both vertexCount and edgeCount, maybe we could have graph hold two int members, numEdges and numVertices thatare
+  //incremented and decremented during each addition of an edge or vertex. Might be tricky to account for shared / duplicate edges.
+  public int vertexCount() {
+      return internalVertices.length();
+	
+  }
 
   /**
    * edgeCount() returns the total number of edges in the graph.
-   *
    * Running time:  O(1).
    */
-  
-
-  public int edgeCount();
+  public int edgeCount() {  
+	  return edgeCount;
+  }
 
   /**
    * getVertices() returns an array containing all the objects that serve
@@ -46,8 +82,11 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
+  //Note to self: Beginning at the first item in the DList, we need to somehow iterate through all the internalVertices, then retrieve the actual vertex
+  //We then place in an array
+  public Object[] getVertices() {
 
-  public Object[] getVertices();
+  }
 
   /**
    * addVertex() adds a vertex (with no incident edges) to the graph.
@@ -56,9 +95,23 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
+  //Note to self: When we add a new vertex to the graph, we need to pass it to the hashtable, and also add it to a linkedList of vertices.
+  //To do so, we take the vertex Object, store it inside of the hashtable, and then we use it to create a new internalVertex item.
+  //This internalVertex is then added to the current DList class member. Since internalVertex has a doubly linked list for edges, this should be good enough.
+  public void addVertex(Object vertex) {
 
-  
-  public void addVertex(Object vertex);
+    // Only add new verts, existing skipped
+    if (!isVertex(vertex)) {
+      // New internal representative
+      InternalVertex newVertex = new InternalVertex(vertex);
+
+      //into hash table
+      vertexHashTable.insert(vertex, newVertex);
+
+      //into Vert dlist
+      internalVertices.insertFront(newVertex);  
+    }
+  }
 
   /**
    * removeVertex() removes a vertex from the graph.  All edges incident on the
@@ -67,10 +120,10 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
+  public void removeVertex(Object vertex) {
+    // todo
 
-
-   // --------- David's done here
-  public void removeVertex(Object vertex);
+  }
 
   /**
    * isVertex() returns true if the parameter "vertex" represents a vertex of
@@ -78,7 +131,9 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isVertex(Object vertex);
+  public boolean isVertex(Object vertex) {
+    return (vertexHashTable.find(vertex) != null);
+  }
 
   /**
    * degree() returns the degree of a vertex.  Self-edges add only one to the
@@ -88,7 +143,9 @@ public class WUGraph {
    * Running time:  O(1).
    */
 
-  public int degree(Object vertex);
+  public int degree(Object vertex) {
+
+  }
 
   /**
    * getNeighbors() returns a new Neighbors object referencing two arrays.  The
@@ -108,7 +165,9 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
-  public Neighbors getNeighbors(Object vertex);
+  public Neighbors getNeighbors(Object vertex) {
+
+  }
 
   /**
    * addEdge() adds an edge (u, v) to the graph.  If either of the parameters
@@ -119,7 +178,10 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void addEdge(Object u, Object v, int weight);
+  //Could do something like, internalVertex.edgeList.insertFront......
+  public void addEdge(Object u, Object v, int weight) {
+
+  }
 
   /**
    * removeEdge() removes an edge (u, v) from the graph.  If either of the
@@ -129,7 +191,9 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void removeEdge(Object u, Object v);
+  public void removeEdge(Object u, Object v) {
+
+  }
 
   /**
    * isEdge() returns true if (u, v) is an edge of the graph.  Returns false
@@ -138,7 +202,9 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isEdge(Object u, Object v);
+  public boolean isEdge(Object u, Object v) {
+
+  }
 
   /**
    * weight() returns the weight of (u, v).  Returns zero if (u, v) is not
@@ -154,6 +220,8 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int weight(Object u, Object v);
+  public int weight(Object u, Object v) {
+
+  }
 
 }
