@@ -13,6 +13,8 @@ public int edgeCount = 0;
 public HashTableChained vertexHashTable = new HashTableChained();
 public HashTableChained edgeHashTable = new HashTableChained();
 
+public DList internalVertices = new DList();
+
 public class WUGraph {
 
   /**
@@ -30,7 +32,7 @@ public class WUGraph {
   //For both vertexCount and edgeCount, maybe we could have graph hold two int members, numEdges and numVertices thatare
   //incremented and decremented during each addition of an edge or vertex. Might be tricky to account for shared / duplicate edges.
   public int vertexCount() {
-      return vertexCount;
+      return internalVertices.length();
 	
   }
 
@@ -39,7 +41,7 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int edgeCount() {
+  public int edgeCount() {  
 	  return edgeCount;
   }
 
@@ -69,7 +71,14 @@ public class WUGraph {
   //Note to self: When we add a new vertex to the graph, we need to pass it to the hashtable, and also add it to a linkedList of vertices.
   //To do so, we take the vertex Object, store it inside of the hashtable, and then we use it to create a new internalVertex item.
   //This internalVertex is then added to the current DList class member. Since internalVertex has a doubly linked list for edges, this should be good enough.
-  public void addVertex(Object vertex);
+  public void addVertex(Object vertex) {
+	  currentVertex = internalVertices.front();
+		
+	  while(currentVertex != null) {
+		  
+		  currentVertex = internalVertices.next(currentVertex);
+	  }
+  }
 
   /**
    * removeVertex() removes a vertex from the graph.  All edges incident on the
