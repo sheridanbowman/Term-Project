@@ -9,10 +9,12 @@ David First 5:
     (Also, the Internal Vertex Class)
 Sheridan
     Addvertex / doneish
+      Needs to add counts to maintain vert/edgeCount
     Removevertex / wip
+      Needs to add counts to maintain vert/edgeCount
     Isvertex / done
-    Degree
-    Getneighbors
+    Degree / done
+    Getneighbors / wip
 Ethan
     addEdge
     removeEdge
@@ -25,6 +27,7 @@ package graph;
 
 import list.DList;
 import dict.HashTableChained;
+import dict.Entry;
 
 /**
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
@@ -120,9 +123,19 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
-  public void removeVertex(Object vertex) {
-    // todo
 
+  // Delete from inside out ; Hashtable/VertexDList/internal edge list/VertexPairs
+  // 
+  public void removeVertex(Object vertex) {
+    // only bother on graphed vertex to begin with
+    Entry hashResult = vertexHashTable.find(vertex);
+    if (hashResult != null) {
+      InternalVertex internalVertex = (InternalVertex) hashResult.value();
+      Object[] vertexNeighbors = getNeighbors((vertex)).neighborList;
+      // With both vert parents on each edge, can remove each Vertex pair & its child/sibling edges now
+          // WIP
+
+    }
   }
 
   /**
@@ -143,8 +156,19 @@ public class WUGraph {
    * Running time:  O(1).
    */
 
+  // it appears that 'degree' refers to all incident edges to a vertex
+  // basically, edge count
   public int degree(Object vertex) {
+    Entry hashResult = vertexHashTable.find(vertex);
 
+    // fail case on ungraphed vert being queried 
+    if (hashResult == null) {
+      return 0;
+
+    } else { // Otherwise, get internal vertex, get its edge count
+      InternalVertex internalVertex = (InternalVertex) hashResult.value();
+      return internalVertex.edgeList.length();
+    }
   }
 
   /**
@@ -166,7 +190,8 @@ public class WUGraph {
    * Running time:  O(d), where d is the degree of "vertex".
    */
   public Neighbors getNeighbors(Object vertex) {
-
+    //your code here
+    return new Neighbors();
   }
 
   /**
@@ -180,7 +205,7 @@ public class WUGraph {
    */
   //Could do something like, internalVertex.edgeList.insertFront......
   public void addEdge(Object u, Object v, int weight) {
-
+    //your code here
   }
 
   /**
@@ -192,7 +217,7 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public void removeEdge(Object u, Object v) {
-
+    //your code here
   }
 
   /**
@@ -203,6 +228,8 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public boolean isEdge(Object u, Object v) {
+    //your code here
+    return false;
 
   }
 
@@ -221,6 +248,8 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public int weight(Object u, Object v) {
+    //your code here
+    return 0;
 
   }
 
