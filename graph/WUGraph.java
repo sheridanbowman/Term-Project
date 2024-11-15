@@ -21,13 +21,17 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int vertexCount();
+
+  
+  public int vertexCount(); 
 
   /**
    * edgeCount() returns the total number of edges in the graph.
    *
    * Running time:  O(1).
    */
+  
+
   public int edgeCount();
 
   /**
@@ -42,6 +46,7 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
+
   public Object[] getVertices();
 
   /**
@@ -51,6 +56,8 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
+
+  
   public void addVertex(Object vertex);
 
   /**
@@ -60,6 +67,9 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
+
+
+   // --------- David's done here
   public void removeVertex(Object vertex);
 
   /**
@@ -77,6 +87,7 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
+
   public int degree(Object vertex);
 
   /**
