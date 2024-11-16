@@ -8,13 +8,11 @@ David First 5:
     getVerticies / done
     (Also, the Internal Vertex Class) / might not be necessary due to Entry class, see discord groupchat message
 Sheridan
-    Addvertex / doneish
-      Needs to add counts to maintain vert/edgeCount
-    Removevertex / wip
-      Needs to add counts to maintain vert/edgeCount
+    Addvertex / done
+    Removevertex / done
     Isvertex / done
     Degree / done
-    Getneighbors / wip
+    Getneighbors / done
 Ethan
     addEdge
     removeEdge
@@ -25,9 +23,10 @@ Ethan
 
 package graph;
 
-import list.DList;
-import dict.HashTableChained;
 import dict.Entry;
+import dict.HashTableChained;
+import list.DList;
+import list.DListNode;
 
 /**
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
@@ -46,11 +45,6 @@ public class WUGraph {
 
   public DList internalVertices;
 
-  public int vertexCount = 0;
-  public int edgeCount = 0;
-
-  public DList internalVertices = new DList();
-
 
   /**
    * WUGraph() constructs a graph having no vertices or edges.
@@ -60,7 +54,7 @@ public class WUGraph {
 
 	  //Initializes the hashTables for the vertices and the edges.
 	  vertexHashTable = new HashTableChained();
-	  edgeHashTable = = new HashTableChained();
+	  edgeHashTable = new HashTableChained();
 	  
 	  //Sets edgeCount to 0.
 	  edgeCount = 0;
@@ -122,13 +116,14 @@ public class WUGraph {
 	  int i = 0;
 	  
 	  //We begin at the first vertex, and currentVertex is null if the list is empty.
-	  currentVertex = internalVertices.front();
+	  DListNode currentVertex = internalVertices.front();
 	  
 	  //While currentVertex is not null, we add the currentVertex (the internal representation) to the result array.
 	  //We then assign currentVertex as the next vertex in line.
 	  //The loop breaks when we reach the last node in the list.
 	  while(currentVertex != null) {
-		  result[i] = currentVertex;
+      InternalVertex internalVertex = (InternalVertex) currentVertex.item;
+		  result[i] = internalVertex.realVertex;
 		  i = i + 1;
 		  currentVertex = internalVertices.next(currentVertex);
 	  }
@@ -153,17 +148,6 @@ public class WUGraph {
   //This internalVertex is then added to the current DList class member. Since internalVertex has a doubly linked list for edges, this should be good enough.
   
   public void addVertex(Object vertex) {
-      //David's version
-	  Object keyPlaceholder;   //Temporary placeholder for what the key should be.
-	  Edge resultEntry;        //The resulting entry object that we get from inserting to the hashtable.
-	  
-	  //If the vertex we passed to addVertex does not exist, then we can add it to the hashtable and the internal vertices list.
-	  if(!(this.isVertex(vertex))) {
-		  resultEntry = vertexHashTable.insert(keyPlaceholder, vertex);
-		  internalVertices.insertBack(resultEntry);
-	  }
-	  
-    //Sheridan's version
     // Only add new verts, existing skipped
     if (!isVertex(vertex)) {
       // New internal representative
@@ -174,13 +158,12 @@ public class WUGraph {
 
       //into Vert dlist
       internalVertices.insertFront(newVertex);  
+      
+      //pointer to dlistnode containing this internalvertex, grab pointer to what was just put in
+      newVertex.parentDlistNode = internalVertices.front();
     }
   }
   
-  
-  
-  
-
   /**
    * removeVertex() removes a vertex from the graph.  All edges incident on the
    * deleted vertex are removed as well.  If the parameter "vertex" does not
@@ -190,16 +173,29 @@ public class WUGraph {
    */
 
   // Delete from inside out ; Hashtable/VertexDList/internal edge list/VertexPairs
-  // 
+  // removes ref from vert hashtable, edge hashtable, and internal dlists
   public void removeVertex(Object vertex) {
-    // only bother on graphed vertex to begin with
+    // break case for bad query
     Entry hashResult = vertexHashTable.find(vertex);
     if (hashResult != null) {
-      InternalVertex internalVertex = (InternalVertex) hashResult.value();
-      Object[] vertexNeighbors = getNeighbors((vertex)).neighborList;
-      // With both vert parents on each edge, can remove each Vertex pair & its child/sibling edges now
-          // WIP
+      InternalVertex targetVertex = (InternalVertex) hashResult.value();  
+      
+      
+      // Delete all relevant edges to neighbors, if there are any
+      Neighbors neighbors = getNeighbors(vertex);
+      if (neighbors != null) {
+        Object[] vertexNeighbors = neighbors.neighborList;
 
+        for (Object vertexNeighbor : vertexNeighbors) {
+            removeEdge(targetVertex, vertexNeighbor);
+        }
+      }
+
+      // use internal dlistnode pointer to remove w.out having to iterate through dlist
+      internalVertices.remove(targetVertex.parentDlistNode);
+
+      // remove from hashtable, all done!
+      vertexHashTable.remove(vertex);
     }
   }
 
@@ -255,8 +251,39 @@ public class WUGraph {
    * Running time:  O(d), where d is the degree of "vertex".
    */
   public Neighbors getNeighbors(Object vertex) {
-    //your code here
-    return new Neighbors();
+
+    // Get internal vertex
+    // InternalVertex internalVertex = (InternalVertex) vertexHashTable.find(vertex).value();
+    int internalEdgeCount = degree(vertex); // returns 0 on empty vertex and bad query, both cases in one
+
+    if (internalEdgeCount == 0) { // break case for bad query
+      return null;
+    } else {
+      // New neighbor wrapper
+      Neighbors neighbors = new Neighbors();
+      neighbors.neighborList = new Object[internalEdgeCount];
+      neighbors.weightList = new int[internalEdgeCount];
+
+      // populate weights and neighborlist with real items, weights
+      int i = 0;
+      DListNode currentVertex = internalVertices.front();
+      
+      while(currentVertex != null) {
+        InternalVertex internalVertex = (InternalVertex) currentVertex.item;
+
+        // add neighbor
+        neighbors.neighborList[i] = internalVertex.realVertex;
+
+        //add weight between neighbor & input vertex
+        neighbors.weightList[i] = weight(internalVertex.realVertex, vertex);
+
+        i = i + 1;
+        currentVertex = internalVertices.next(currentVertex);
+      }
+
+      return new Neighbors();
+    }
+    
   }
 
   /**
