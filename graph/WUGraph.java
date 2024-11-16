@@ -6,24 +6,40 @@ package graph;
  * The WUGraph class represents a weighted, undirected graph.  Self-edges are
  * permitted.
  */
-public int vertexCount = 0;
-public int edgeCount = 0;
 
-//Vertex and Edge HashTable that hold the references to the actual vertex and the vertex pair object (for the edges)
-public HashTableChained vertexHashTable = new HashTableChained();
-public HashTableChained edgeHashTable = new HashTableChained();
 
-public DList internalVertices = new DList();
 
 public class WUGraph {
+   
+  //Keeps track of the amount of edges. Is incremented when we add an edge, decremented when we delete one.
+  public int edgeCount;
 
+  //Vertex and Edge HashTable that hold the references to the actual vertex and the vertex pair object (for the edges)
+  public HashTableChained vertexHashTable;
+  public HashTableChained edgeHashTable;
+
+  public DList internalVertices;
   /**
    * WUGraph() constructs a graph having no vertices or edges.
    *
    * Running time:  O(1).
    */
-  public WUGraph();
+  public WUGraph() {
+	  
+	  //Initiaizes the hashTables for the vertices and the edges.
+	  vertexHashTable = new HashTableChained();
+	  edgeHashTable = = new HashTableChained();
+	  
+	  //Sets edgeCount to 0.
+	  edgeCount = 0;
+	  internalVertices = new DList();
+  }
 
+  
+  
+  
+  
+  
   /**
    * vertexCount() returns the number of vertices in the graph.
    *
@@ -32,19 +48,33 @@ public class WUGraph {
   //For both vertexCount and edgeCount, maybe we could have graph hold two int members, numEdges and numVertices thatare
   //incremented and decremented during each addition of an edge or vertex. Might be tricky to account for shared / duplicate edges.
   public int vertexCount() {
-      return internalVertices.length();
+      
+	  //Returns the amount of vertices by doing internalVertices.length().
+	  return internalVertices.length();
 	
   }
+  
+  
+  
 
+  
+  
   /**
    * edgeCount() returns the total number of edges in the graph.
    *
    * Running time:  O(1).
    */
   public int edgeCount() {  
-	  return edgeCount;
+	  
+	  //Returns the edgeCount counter.
+	  return this.edgeCount;
   }
 
+  
+  
+  
+  
+  
   /**
    * getVertices() returns an array containing all the objects that serve
    * as vertices of the graph.  The array's length is exactly equal to the
@@ -57,9 +87,36 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
+  
   //Note to self: Beginning at the first item in the DList, we need to somehow iterate through all the internalVertices, then retrieve the actual vertex
   //We then place in an array
-  public Object[] getVertices();
+  public Object[] getVertices() {
+	  
+	  //Creates an array of type Object called result of the size of the amount of internalVertices.
+	  Object[] result = new Object[this.internalVertices.length()];
+	  int i = 0;
+	  
+	  //We begin at the first vertex, and currentVertex is null if the list is empty.
+	  currentVertex = internalVertices.front();
+	  
+	  //While currentVertex is not null, we add the currentVertex (the internal representation) to the result array.
+	  //We then assign currentVertex as the next vertex in line.
+	  //The loop breaks when we reach the last node in the list.
+	  while(currentVertex != null) {
+		  result[i] = currentVertex;
+		  i = i + 1;
+		  currentVertex = internalVertices.next(currentVertex);
+	  }
+	  
+	  //We then return the result list.
+	  return result;
+	 
+  }
+  
+  
+  
+  
+  
 
   /**
    * addVertex() adds a vertex (with no incident edges) to the graph.
@@ -71,14 +128,22 @@ public class WUGraph {
   //Note to self: When we add a new vertex to the graph, we need to pass it to the hashtable, and also add it to a linkedList of vertices.
   //To do so, we take the vertex Object, store it inside of the hashtable, and then we use it to create a new internalVertex item.
   //This internalVertex is then added to the current DList class member. Since internalVertex has a doubly linked list for edges, this should be good enough.
+  
   public void addVertex(Object vertex) {
-	  currentVertex = internalVertices.front();
-		
-	  while(currentVertex != null) {
-		  
-		  currentVertex = internalVertices.next(currentVertex);
+	  Object keyPlaceholder;   //Temporary placeholder for what the key should be.
+	  Edge resultEntry;        //The resulting entry object that we get from inserting to the hashtable.
+	  
+	  //If the vertex we passed to addVertex does not exist, then we can add it to the hashtable and the internal vertices list.
+	  if(!(this.isVertex(vertex))) {
+		  resultEntry = vertexHashTable.insert(keyPlaceholder, vertex);
+		  internalVertices.insertBack(resultEntry);
 	  }
+	  
   }
+  
+  
+  
+  
 
   /**
    * removeVertex() removes a vertex from the graph.  All edges incident on the
