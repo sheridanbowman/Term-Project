@@ -1,5 +1,7 @@
 package graph;
 
+import list.DList;
+
 public class InternalVertex {
     
 	public Object realVertex;               //Holds the real vertex object
