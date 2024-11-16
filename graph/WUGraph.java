@@ -295,7 +295,7 @@ public class WUGraph {
    * Running time:  O(1).
    */
   //Could do something like, internalVertex.edgeList.insertFront......
-    public void addEdge(Object u, Object v, int weight) {
+  public void addEdge(Object u, Object v, int weight) {
     edgeCount++;
     VertexPair edge = new VertexPair(u, v);
     edgeHashTable.insert(edge, weight);
@@ -351,13 +351,11 @@ public class WUGraph {
   public int weight(Object u, Object v)
   {
     VertexPair edge = new VertexPair(u, v);
-    if(edgeHashTable.find(edge).value() == null)
-    {
+    Entry hashResult = edgeHashTable.find(edge);
+    if(hashResult == null){
       return 0;
-    }
-    else
-    {
-      return((int)edgeHashTable.find(edge).value());
+    } else {
+      return (int) hashResult.value();
     }
   }
 
