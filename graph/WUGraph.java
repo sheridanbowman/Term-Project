@@ -49,10 +49,6 @@ public class WUGraph {
   public int vertexCount = 0;
   public int edgeCount = 0;
 
-  //Vertex and Edge HashTable that hold the references to the actual vertex and the vertex pair object (for the edges)
-  public HashTableChained vertexHashTable = new HashTableChained();
-  public HashTableChained edgeHashTable = new HashTableChained();
-
   public DList internalVertices = new DList();
 
 
