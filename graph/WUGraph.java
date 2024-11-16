@@ -45,7 +45,6 @@ public class WUGraph {
 
   public DList internalVertices;
 
-
   /**
    * WUGraph() constructs a graph having no vertices or edges.
    * Running time:  O(1).
@@ -296,8 +295,12 @@ public class WUGraph {
    * Running time:  O(1).
    */
   //Could do something like, internalVertex.edgeList.insertFront......
-  public void addEdge(Object u, Object v, int weight) {
-    //your code here
+    public void addEdge(Object u, Object v, int weight)
+  {
+    edgecount++;
+    VertexPair edge = new VertexPair(u, v)
+    edgeHashTable.insert(edge, weight);
+    vertexHashTable.find(u).edgeList.insertFront(edge);
   }
 
   /**
@@ -308,8 +311,13 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void removeEdge(Object u, Object v) {
-    //your code here
+  public void removeEdge(Object u, Object v);
+  {
+    edgecount--;
+    VertexPair edge = new VertexPair(u, v);
+    edgeHashTable.remove(edge);
+    InternalVertex intVertex = vertexHashtable.find(u);
+    intVertex.edgeList.remove(intVertex.parentDlistNode);
   }
 
   /**
@@ -319,10 +327,14 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isEdge(Object u, Object v) {
-    //your code here
-    return false;
-
+  public boolean isEdge(Object u, Object v)
+  {
+    VertexPair edge = new VertexPair(u, v)
+    if(edgeHashTable.find(edge) == null)
+    {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -339,10 +351,17 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int weight(Object u, Object v) {
-    //your code here
-    return 0;
-
+  public int weight(Object u, Object v)
+  {
+    VertexPair edge = new VertexPair(u, v)
+    if(edgehashTable.find(edge) == null)
+    {
+      return 0;
+    }
+    else
+    {
+      return(edgehashTable.find(edge));
+    }
   }
 
 }
