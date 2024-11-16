@@ -295,12 +295,11 @@ public class WUGraph {
    * Running time:  O(1).
    */
   //Could do something like, internalVertex.edgeList.insertFront......
-    public void addEdge(Object u, Object v, int weight)
-  {
-    edgecount++;
-    VertexPair edge = new VertexPair(u, v)
+    public void addEdge(Object u, Object v, int weight) {
+    edgeCount++;
+    VertexPair edge = new VertexPair(u, v);
     edgeHashTable.insert(edge, weight);
-    vertexHashTable.find(u).edgeList.insertFront(edge);
+    ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(edge);
   }
 
   /**
@@ -311,12 +310,11 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void removeEdge(Object u, Object v);
-  {
-    edgecount--;
+  public void removeEdge(Object u, Object v) {
+    edgeCount--;
     VertexPair edge = new VertexPair(u, v);
     edgeHashTable.remove(edge);
-    InternalVertex intVertex = vertexHashtable.find(u);
+    InternalVertex intVertex = (InternalVertex) vertexHashTable.find(u).value();
     intVertex.edgeList.remove(intVertex.parentDlistNode);
   }
 
@@ -327,9 +325,8 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isEdge(Object u, Object v)
-  {
-    VertexPair edge = new VertexPair(u, v)
+  public boolean isEdge(Object u, Object v){
+    VertexPair edge = new VertexPair(u, v);
     if(edgeHashTable.find(edge) == null)
     {
       return false;
@@ -353,14 +350,14 @@ public class WUGraph {
    */
   public int weight(Object u, Object v)
   {
-    VertexPair edge = new VertexPair(u, v)
-    if(edgehashTable.find(edge) == null)
+    VertexPair edge = new VertexPair(u, v);
+    if(edgeHashTable.find(edge).value() == null)
     {
       return 0;
     }
     else
     {
-      return(edgehashTable.find(edge));
+      return((int)edgeHashTable.find(edge).value());
     }
   }
 
