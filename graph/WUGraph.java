@@ -295,11 +295,19 @@ public class WUGraph {
    * Running time:  O(1).
    */
   //Could do something like, internalVertex.edgeList.insertFront......
+  //get internal vertexs from vertex hash table, make a half edge from it 
   public void addEdge(Object u, Object v, int weight) {
     edgeCount++;
     VertexPair edge = new VertexPair(u, v);
+    InternalVertex intVertex_one = (InternalVertex) vertexHashTable.find(u).value();
+    InternalVertex intVertex_two = (InternalVertex) vertexHashTable.find(v).value();
+    HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
+    HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
+    first.setSiblingEdge(second);
+    second.setSiblingEdge(first);
     edgeHashTable.insert(edge, weight);
-    ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(edge);
+    ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(first);
+    ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(second);
   }
 
   /**
@@ -312,10 +320,12 @@ public class WUGraph {
    */
   public void removeEdge(Object u, Object v) {
     edgeCount--;
+    InternalVertex intVertex_one = (InternalVertex) vertexHashTable.find(u).value();
+    InternalVertex intVertex_two = (InternalVertex) vertexHashTable.find(v).value();
     VertexPair edge = new VertexPair(u, v);
     edgeHashTable.remove(edge);
-    InternalVertex intVertex = (InternalVertex) vertexHashTable.find(u).value();
-    intVertex.edgeList.remove(intVertex.parentDlistNode);
+    intVertex_one.edgeList.remove(intVertex_one.parentDlistNode);
+    intVertex_two.edgeList.remove(intVertex_two.parentDlistNode);
   }
 
   /**

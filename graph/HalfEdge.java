@@ -11,4 +11,9 @@ public class HalfEdge {
         internalVert1 = in_internalVert1;
         internalVert2 = in_internalVert2; 
     }
+
+    public void setSiblingEdge(HalfEdge sibling)
+    {
+        siblingEdge = sibling;
+    }
 }
