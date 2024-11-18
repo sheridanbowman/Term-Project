@@ -753,8 +753,12 @@ public class WUGTest {
 
     Object vertArray[] = new Object[VERTICES];
     for (i = 0; i < VERTICES; i++) {
-      vertArray[i] = new Nothing();
+      vertArray[i] = i;
     }
+    // Object vertArray[] = new Object[VERTICES];
+    // for (i = 0; i < VERTICES; i++) {
+    //   vertArray[i] = new Nothing();
+    // }
 
     int score = 14 - vertexTest(vertArray) - edgeTest(vertArray);
     if (score < 0) {

@@ -179,7 +179,6 @@ public class WUGraph {
     if (hashResult != null) {
       InternalVertex targetVertex = (InternalVertex) hashResult.value();  
       
-      
       // Delete all relevant edges to neighbors, if there are any
       Neighbors neighbors = getNeighbors(vertex);
       if (neighbors != null) {
@@ -298,21 +297,35 @@ public class WUGraph {
   //get internal vertexs from vertex hash table, make a half edge from it 
   //null check int vertex one and two 
   public void addEdge(Object u, Object v, int weight) {
-    edgeCount++;
     VertexPair edge = new VertexPair(u, v);
+
     Entry hash_result_first = vertexHashTable.find(u);
     Entry hash_result_second = vertexHashTable.find(v);
-    if((hash_result_first != null) || (hash_result_second != null))
-    {
-      InternalVertex intVertex_one = (InternalVertex) vertexHashTable.find(u).value();
-      InternalVertex intVertex_two = (InternalVertex) vertexHashTable.find(v).value();
+
+    if(hash_result_first != null && hash_result_second != null) {
+      InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
+      InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
+
       HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
       HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
+
       first.setSiblingEdge(second);
       second.setSiblingEdge(first);
+
+      intVertex_one.edgeList.insertFront(first);
+
+      // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
+      if (u.hashCode() != v.hashCode()){
+        System.out.println("  Non-self Edge addition between "+u+" and "+v);
+        intVertex_two.edgeList.insertFront(second);
+      } else {
+        System.out.println("  Self Edge addition between "+u+" and "+v);
+      }
+      System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
+      System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
+      
+      edgeCount++;
       edgeHashTable.insert(edge, first);
-      ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(first);
-      ((InternalVertex) vertexHashTable.find(u).value()).edgeList.insertFront(second);
     }
 
   }
