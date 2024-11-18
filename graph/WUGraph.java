@@ -303,29 +303,56 @@ public class WUGraph {
     Entry hash_result_second = vertexHashTable.find(v);
 
     if(hash_result_first != null && hash_result_second != null) {
-      InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
-      InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
+      if(edgeHashTable.find(edge) == null)
+      {
+        InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
+        InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
 
-      HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
-      HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
+        HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
+        HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
 
-      first.setSiblingEdge(second);
-      second.setSiblingEdge(first);
+        first.setSiblingEdge(second);
+        second.setSiblingEdge(first);
 
-      intVertex_one.edgeList.insertFront(first);
+        intVertex_one.edgeList.insertFront(first);
 
-      // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
-      if (u.hashCode() != v.hashCode()){
-        System.out.println("  Non-self Edge addition between "+u+" and "+v);
-        intVertex_two.edgeList.insertFront(second);
-      } else {
-        System.out.println("  Self Edge addition between "+u+" and "+v);
-      }
-      System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
-      System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
+        // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
+        if (u.hashCode() != v.hashCode()){
+          System.out.println("  Non-self Edge addition between "+u+" and "+v);
+          intVertex_two.edgeList.insertFront(second);
+        } else {
+          System.out.println("  Self Edge addition between "+u+" and "+v);
+       }
+        System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
+        System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
       
-      edgeCount++;
-      edgeHashTable.insert(edge, first);
+        edgeCount++;
+        edgeHashTable.insert(edge, first);
+      }
+      else{
+        edgeHashTable.remove(edge);
+        InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
+        InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
+
+        HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
+        HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
+
+        first.setSiblingEdge(second);
+        second.setSiblingEdge(first);
+
+        intVertex_one.edgeList.insertFront(first);
+        // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
+        if (u.hashCode() != v.hashCode()){
+          System.out.println("  Non-self Edge addition between "+u+" and "+v);
+          intVertex_two.edgeList.insertFront(second);
+        } else {
+          System.out.println("  Self Edge addition between "+u+" and "+v);
+       }
+        System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
+        System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
+      
+        edgeHashTable.insert(edge, first);
+      }
     }
 
   }
