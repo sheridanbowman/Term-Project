@@ -185,7 +185,7 @@ public class WUGraph {
         Object[] vertexNeighbors = neighbors.neighborList;
 
         for (Object vertexNeighbor : vertexNeighbors) {
-            removeEdge(targetVertex, vertexNeighbor);
+            removeEdge(targetVertex.realVertex, vertexNeighbor);
         }
       }
 
@@ -219,13 +219,15 @@ public class WUGraph {
   // basically, edge count
   public int degree(Object vertex) {
     Entry hashResult = vertexHashTable.find(vertex);
-
+    // System.out.println(" in degree for "+ vertex);
     // fail case on ungraphed vert being queried 
     if (hashResult == null) {
+      // System.out.println("  degree found nothing returning 0 ");
       return 0;
 
     } else { // Otherwise, get internal vertex, get its edge count
       InternalVertex internalVertex = (InternalVertex) hashResult.value();
+      // System.out.println("  degree found: "+internalVertex.edgeList.length());
       return internalVertex.edgeList.length();
     }
   }
@@ -249,38 +251,58 @@ public class WUGraph {
    * Running time:  O(d), where d is the degree of "vertex".
    */
   public Neighbors getNeighbors(Object vertex) {
+    Entry hashResult = vertexHashTable.find(vertex);
+    // System.out.println("  getneighbors for " + vertex);
 
-    // Get internal vertex
-    // InternalVertex internalVertex = (InternalVertex) vertexHashTable.find(vertex).value();
-    int internalEdgeCount = degree(vertex); // returns 0 on empty vertex and bad query, both cases in one
-
-    if (internalEdgeCount == 0) { // break case for bad query
+    // break out on fail case on ungraphed vert being queried 
+    if (hashResult == null) {
+      // System.out.println("noquery breakout");
       return null;
-    } else {
-      // New neighbor wrapper
-      Neighbors neighbors = new Neighbors();
-      neighbors.neighborList = new Object[internalEdgeCount];
-      neighbors.weightList = new int[internalEdgeCount];
+    } 
 
-      // populate weights and neighborlist with real items, weights
-      int i = 0;
-      DListNode currentVertex = internalVertices.front();
-      
-      while(currentVertex != null) {
-        InternalVertex internalVertex = (InternalVertex) currentVertex.item;
-
-        // add neighbor
-        neighbors.neighborList[i] = internalVertex.realVertex;
-
-        //add weight between neighbor & input vertex
-        neighbors.weightList[i] = weight(internalVertex.realVertex, vertex);
-
-        i = i + 1;
-        currentVertex = internalVertices.next(currentVertex);
-      }
-
-      return new Neighbors();
+    InternalVertex refInternalVertex = (InternalVertex) hashResult.value();
+    int internalEdgeCount = refInternalVertex.edgeList.length();
+    // System.out.println("   " +internalEdgeCount+ " edges inside");
+    // break out on fail case of no neighbors
+    if (internalEdgeCount == 0) {
+      // System.out.println("Noneighbors breakout");
+      return null;
     }
+
+    //-- Didnt break out due to errors, continue to return neighbors
+    
+    // New neighbor wrapper
+    Neighbors neighbors = new Neighbors();
+
+    neighbors.neighborList = new Object[internalEdgeCount];
+    neighbors.weightList = new int[internalEdgeCount];
+
+    // populate weights and neighborlist with real items, weights from edges
+
+    DListNode currentEdgeDLNode = refInternalVertex.edgeList.front();
+    for (int i = 0; i < internalEdgeCount; i++) {
+        
+      HalfEdge halfEdge = (HalfEdge)currentEdgeDLNode.item;
+
+      // Add weight
+      neighbors.weightList[i] = halfEdge.weight;
+      // System.out.println("   edge is "+ halfEdge.internalVert1.realVertex + " " + halfEdge.internalVert2.realVertex);
+
+      // Add one neighbor of the pair, add the one that isnt the ref internalVert
+      if (halfEdge.internalVert1.equals(refInternalVertex)) {
+        neighbors.neighborList[i] = halfEdge.internalVert2.realVertex;
+      } else {
+        neighbors.neighborList[i] = halfEdge.internalVert1.realVertex;
+      }
+      // System.out.println("   added neighbor "+ neighbors.neighborList[i]);
+      // System.out.println("    neighborslist is "+ Arrays.toString(neighbors.neighborList));
+
+      // increment and continue
+      currentEdgeDLNode = refInternalVertex.edgeList.next(currentEdgeDLNode);
+    }
+    
+
+    return neighbors;
     
   }
 
@@ -303,29 +325,36 @@ public class WUGraph {
     Entry hash_result_second = vertexHashTable.find(v);
 
     if(hash_result_first != null && hash_result_second != null) {
-      InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
-      InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
+      if(edgeHashTable.find(edge) == null)
+      {
+        InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
+        InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
 
-      HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
-      HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
+        HalfEdge first = new HalfEdge(intVertex_one, intVertex_two, weight);
+        HalfEdge second = new HalfEdge(intVertex_one, intVertex_two, weight);
 
-      first.setSiblingEdge(second);
-      second.setSiblingEdge(first);
+        first.setSiblingEdge(second);
+        second.setSiblingEdge(first);
 
-      intVertex_one.edgeList.insertFront(first);
+        intVertex_one.edgeList.insertFront(first);
 
-      // Only add 2nd half edge to the 2nd Vertex if it's a unique vertex (not a self-edge)
-      if (u.hashCode() != v.hashCode()){
-        System.out.println("  Non-self Edge addition between "+u+" and "+v);
-        intVertex_two.edgeList.insertFront(second);
-      } else {
-        System.out.println("  Self Edge addition between "+u+" and "+v);
-      }
-      System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
-      System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
+        // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
+        if (u.hashCode() != v.hashCode()){
+          // System.out.println("  Non-self Edge addition between "+u+" and "+v);
+          intVertex_two.edgeList.insertFront(second);
+        } else {
+          // System.out.println("  Self Edge addition between "+u+" and "+v);
+       }
+        // System.out.println("  vert " + u+" edge len is"+intVertex_one.edgeList.length());
+        // System.out.println("  vert " + v+" edge len is"+intVertex_two.edgeList.length());
       
-      edgeCount++;
-      edgeHashTable.insert(edge, first);
+        edgeCount++;
+        edgeHashTable.insert(edge, first);
+      }
+      else{
+          Entry change = edgeHashTable.find(edge);
+          ((HalfEdge)change.value()).weight = weight;
+      }
     }
 
   }
@@ -342,10 +371,10 @@ public class WUGraph {
     edgeCount--;
     Entry hash_result_first = vertexHashTable.find(u);
     Entry hash_result_second = vertexHashTable.find(v);
-    if((hash_result_first != null) || (hash_result_second != null))
+    if(hash_result_first != null && hash_result_second != null)
     {
-      InternalVertex intVertex_one = (InternalVertex) vertexHashTable.find(u).value();
-      InternalVertex intVertex_two = (InternalVertex) vertexHashTable.find(v).value();
+      InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
+      InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
       VertexPair edge = new VertexPair(u, v);
       edgeHashTable.remove(edge);
       intVertex_one.edgeList.remove(intVertex_one.parentDlistNode);
