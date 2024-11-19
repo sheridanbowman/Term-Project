@@ -15,5 +15,11 @@ public class HalfEdge {
     public void setSiblingEdge(HalfEdge sibling)
     {
         siblingEdge = sibling;
+        sibling.siblingEdge = siblingEdge;
+    }
+
+    public void setWeight(int in_weight)
+    {
+        weight = in_weight;
     }
 }
