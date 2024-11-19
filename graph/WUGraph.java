@@ -314,7 +314,7 @@ public class WUGraph {
 
       intVertex_one.edgeList.insertFront(first);
 
-      // Only add 2nd half edge to 2nd Vertex if it's not a self-edge: otherwise duplicates
+      // Only add 2nd half edge to the 2nd Vertex if it's a unique vertex (not a self-edge)
       if (u.hashCode() != v.hashCode()){
         System.out.println("  Non-self Edge addition between "+u+" and "+v);
         intVertex_two.edgeList.insertFront(second);
