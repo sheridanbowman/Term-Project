@@ -371,7 +371,7 @@ public class WUGraph {
    * is unchanged.  If (u, v) is not an edge of the graph, the graph is
    * unchanged.
    *
-   * Running time:  O(1).
+   * Running time:  O(1). 
    */
   public void removeEdge(Object u, Object v) {
     
