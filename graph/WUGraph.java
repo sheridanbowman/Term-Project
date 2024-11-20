@@ -368,11 +368,11 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public void removeEdge(Object u, Object v) {
-    edgeCount--;
     Entry hash_result_first = vertexHashTable.find(u);
     Entry hash_result_second = vertexHashTable.find(v);
     if(hash_result_first != null && hash_result_second != null)
     {
+      edgeCount--;
       InternalVertex intVertex_one = (InternalVertex) hash_result_first.value();
       InternalVertex intVertex_two = (InternalVertex) hash_result_second.value();
       VertexPair edge = new VertexPair(u, v);
