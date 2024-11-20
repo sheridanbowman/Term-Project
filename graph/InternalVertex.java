@@ -14,9 +14,13 @@ public class InternalVertex {
 	
 	//Holds all of the edges 
 	public DList edgeList = new DList();    
+
+	// maintained count similar to edgeList.length(), but tallying self-joins correctly
+	public int degree = 0;
 	
 	public InternalVertex(Object vertex) {
 		realVertex = vertex;
+
 	}
 
 }
