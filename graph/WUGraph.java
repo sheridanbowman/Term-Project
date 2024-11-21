@@ -25,6 +25,7 @@ package graph;
 
 import dict.Entry;
 import dict.HashTableChained;
+import java.util.Arrays;
 import list.DList;
 import list.DListNode;
 
@@ -178,7 +179,7 @@ public class WUGraph {
     InternalVertex targetVertex = getInternalVertex(vertex);
     if (targetVertex != null) {
 
-      // Only continue on there actually being neighbors
+      // Only continue when there's neighbors to remove
       Neighbors neighbors = getNeighbors(vertex);
       if (neighbors != null) {
 
@@ -262,9 +263,10 @@ public class WUGraph {
     } 
 
     int internalEdgeCount = refInternalVertex.edgeList.length();
-    // System.out.println("   " +internalEdgeCount+ " edges inside");
+    // System.out.println("   found " +internalEdgeCount+ " edges inside " + vertex);
     // break out on fail case of no neighbors
     if (internalEdgeCount == 0) {
+      System.out.println("   found " +internalEdgeCount+ " edges inside " + vertex);
       // System.out.println("Noneighbors breakout");
       return null;
     }
@@ -295,12 +297,12 @@ public class WUGraph {
         neighbors.neighborList[i] = halfEdge.internalVert1.realVertex;
       }
       // System.out.println("   added neighbor "+ neighbors.neighborList[i]);
-      // System.out.println("    neighborslist is "+ Arrays.toString(neighbors.neighborList));
+      
 
       // increment and continue
       currentEdgeDLNode = refInternalVertex.edgeList.next(currentEdgeDLNode);
     }
-
+    System.out.println("    neighbors to " + vertex + " is "+ Arrays.toString(neighbors.neighborList));
     return neighbors;
     
   }
@@ -318,7 +320,6 @@ public class WUGraph {
   //null check int vertex one and two 
   public void addEdge(Object u, Object v, int weight) {
     
-    // check case that verticies exist first
     // Check if verticies exist, first
     InternalVertex internalVertex_u = getInternalVertex(u);
     InternalVertex internalVertex_v = getInternalVertex(v);
@@ -358,9 +359,15 @@ public class WUGraph {
         edgeHashTable.insert(vertexPair, firstHalfEdge);
 
       } else { 
-        // edge already exists, just update it's value
-        ((HalfEdge)vertexPairEntry.value()).weight = weight;
+        // edge already exists, just update it's values
+        HalfEdge halfEdge= (HalfEdge)vertexPairEntry.value();
+        halfEdge.weight = weight;
+        halfEdge.siblingEdge.weight = weight;
+
       }
+      //debug
+      getNeighbors(v);
+      getNeighbors(u);
     }
 
   }
@@ -381,12 +388,21 @@ public class WUGraph {
 
     // Also, only remove edge if it exists
     if(internalVertex_u != null && internalVertex_v != null && isEdge(u, v)){
+      System.out.println("  Removing edge between "+u+" " + v);
 
+      // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it
+      internalVertex_u.edgeList.remove(internalVertex_v.parentDlistNode);
+      System.out.println("      "+u+"'s edge list length is now "+internalVertex_u.edgeList.length());  
+      getNeighbors(u);
       internalVertex_u.degree--;
-      // System.out.println("  degree of "+u+" is now "+internalVertex_u.degree);
 
       // Only deduct degree again if it's not a self edge, when u & v are not the same instance
       if (u.hashCode() != v.hashCode()){
+
+        // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it
+        internalVertex_v.edgeList.remove(internalVertex_u.parentDlistNode);
+        System.out.println("      "+v+"'s edge list length is now "+internalVertex_v.edgeList.length());  
+        getNeighbors(v);
         internalVertex_v.degree--;    
         // System.out.println("  degree of "+v+" is now "+internalVertex_v.degree);    
       }
@@ -395,9 +411,11 @@ public class WUGraph {
       VertexPair edge = new VertexPair(u, v);
 
       edgeHashTable.remove(edge);
-      internalVertex_u.edgeList.remove(internalVertex_u.parentDlistNode);
-      internalVertex_v.edgeList.remove(internalVertex_v.parentDlistNode);
+
+    } else {
+      // System.out.println("    edge NOT removed between "+u+" and "+v+" - edge or verts not found");   
     }
+
   }
 
   // wrapper to either null or the internal vertex, if found within the vertexHashTable
@@ -427,9 +445,13 @@ public class WUGraph {
   public boolean isEdge(Object u, Object v){
     VertexPair edge = new VertexPair(u, v);
     if(edgeHashTable.find(edge) == null) {
+      // System.out.println("  no hash table vertexPair found between "+u+" and "+v);
       return false;
+    } else {
+      // System.out.println("  hash table entry found between "+u+" and "+v);
+      return true;
     }
-    return true;
+
   }
 
   /**
@@ -450,8 +472,10 @@ public class WUGraph {
     VertexPair edge = new VertexPair(u, v);
     Entry hashResult = edgeHashTable.find(edge);
     if(hashResult == null){
+      
       return 0;
     } else {
+      
       return ((HalfEdge) hashResult.value()).weight;
     }
   }
