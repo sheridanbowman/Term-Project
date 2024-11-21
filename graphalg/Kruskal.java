@@ -3,7 +3,8 @@
 package graphalg;
 
 import graph.*;
-import set.*;
+import list.LinkedQueue;
+import static list.sorts.mergeSort;
 
 /**
  * The Kruskal class contains the method minSpanTree(), which implements
@@ -21,41 +22,79 @@ public class Kruskal {
    */
   public static WUGraph minSpanTree(WUGraph g) {
 
-    WUGraph newGraph = new WUGraph();''
-    // tree is where we will store result as it is computed
-    PositionalList<Edge<Integer>> tree = new LinkedPositionalList<>();
+    // New graph to fill with MST & return
+    WUGraph newGraph = new WUGraph();
+    
+    // real verticies from old graph
+    Object[] realVerts = g.getVertices();
 
-    // pq entries are edges of graph, with weights as keys
-    PriorityQueue<Integer, Edge<Integer>> pq = new HeapPriorityQueue<>();
+    // unsorted edges init
+    LinkedQueue edgeQueue = new LinkedQueue(); 
+    
+    // for each vertex, check its neighbors, and add those edges to queue
+    for (Object realVert : realVerts) {
+      // transfer to vert to result graph, no matter what vertex count will be same
+      newGraph.addVertex(realVert);
+      
+      Neighbors vertNeighborWrapper = g.getNeighbors(realVert);
 
-    // union-find forest of components of the graph
-    Partition<Vertex<V>> forest = new Partition<>();
 
-    // map each vertex to the forest position
-    Map<Vertex<V>,Position<Vertex<V>>> positions = new ProbeHashMap<>();
+      // for each vertex's neighbor, add edge from parent vert + neighbor, weight
+      // theres probably a cleaner way to iterate through both lists simultaneously
+      int weightIndex = 0;
+      int[] vertNeighborWeights = vertNeighborWrapper.weightList;
+      Object[] vertNeighborList = vertNeighborWrapper.neighborList;
 
-    for (Vertex<V> v : g.vertices())
-        positions.put(v, forest.makeCluster(v));
+      for (Object vertNeighbor : vertNeighborList) {
+        Edge newEdge = new Edge(realVert, vertNeighbor, vertNeighborWeights[weightIndex]);
+        
+        edgeQueue.enqueue(newEdge);
 
-    for (Edge<Integer> e : g.edges())
-        pq.insert(e.getElement(), e);
-
-    int size = g.numVertices();
-    // while tree not spanning and unprocessed edges remain...
-    while (tree.size() != size - 1 && !pq.isEmpty()) {
-        Entry<Integer, Edge<Integer>> entry = pq.removeMin();
-        Edge<Integer> edge = entry.getValue();
-        Vertex<V>[] endpoints = g.endVertices(edge);
-        Position<Vertex<V>> a = forest.find(positions.get(endpoints[0]));
-        Position<Vertex<V>> b = forest.find(positions.get(endpoints[1]));
-        if (a != b) {
-            tree.addLast(edge);
-            forest.union(a,b);
-        }
+        weightIndex++;
+      }
     }
 
-    return tree;
-  }
-}
+    //sort the edgequeue by weight
+    // --- ---- this wont work until Edge comparable is implemented
+    mergeSort(edgeQueue);
 
+    // Theoretically have a sorted linkedQueue of edges w. weights, and vertexlist extracted, ready for Kruskal
+    // Do the disjoint set stuff here v----v-----v----v
+
+
+
+    // tree is where we will store result as it is computed
+    // PositionalList<Edge<Integer>> tree = new LinkedPositionalList<>();
+
+    // // pq entries are edges of graph, with weights as keys
+    // PriorityQueue<Integer, Edge<Integer>> pq = new HeapPriorityQueue<>();
+
+    // // union-find forest of components of the graph
+    // Partition<Vertex<V>> forest = new Partition<>();
+
+    // // map each vertex to the forest position
+    // Map<Vertex<V>,Position<Vertex<V>>> positions = new ProbeHashMap<>();
+
+    // for (Vertex<V> v : g.vertices())
+    //     positions.put(v, forest.makeCluster(v));
+
+    // for (Edge<Integer> e : g.edges())
+    //     pq.insert(e.getElement(), e);
+
+    // int size = g.numVertices();
+    // // while tree not spanning and unprocessed edges remain...
+    // while (tree.size() != size - 1 && !pq.isEmpty()) {
+    //     Entry<Integer, Edge<Integer>> entry = pq.removeMin();
+    //     Edge<Integer> edge = entry.getValue();
+    //     Vertex<V>[] endpoints = g.endVertices(edge);
+    //     Position<Vertex<V>> a = forest.find(positions.get(endpoints[0]));
+    //     Position<Vertex<V>> b = forest.find(positions.get(endpoints[1]));
+    //     if (a != b) {
+    //         tree.addLast(edge);
+    //         forest.union(a,b);
+    //     }
+    // }
+
+    return newGraph;
+  }
 }
