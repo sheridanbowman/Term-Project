@@ -5,7 +5,9 @@ package graphalg;
 import dict.HashTableChained;
 import graph.*;
 import list.LinkedQueue;
+import list.QueueEmptyException;
 import static list.sorts.mergeSort;
+import set.DisjointSets;
 
 /**
  * The Kruskal class contains the method minSpanTree(), which implements
@@ -71,40 +73,46 @@ public class Kruskal {
     // --- ---- this wont work until Edge comparable is implemented
     mergeSort(edgeQueue);
 
+    // Edge[] minEdges = new Edge[realVerts.length-1];
+
     // Theoretically have a sorted linkedQueue of edges w. weights, and vertexlist extracted, ready for Kruskal
     // Do the disjoint set stuff here v----v-----v----v
 
-    // tree is where we will store result as it is computed
-    // PositionalList<Edge<Integer>> tree = new LinkedPositionalList<>();
+    DisjointSets forest = new DisjointSets(realVerts.length);
 
-    // // pq entries are edges of graph, with weights as keys
-    // PriorityQueue<Integer, Edge<Integer>> pq = new HeapPriorityQueue<>();
+    // System.out.println(minEdges.length + " " +(realVerts.length));
 
-    // // union-find forest of components of the graph
-    // Partition<Vertex<V>> forest = new Partition<>();
+    // System.out.println(Arrays.toString(minEdges));
+    // while tree not spanning and unprocessed edges remain...
+    while (newGraph.edgeCount != realVerts.length - 1 && !edgeQueue.isEmpty()) {
+      System.out.println("edge count is " + newGraph.edgeCount + "against " + (realVerts.length - 1));
+      try {
+        Edge curEdge = (Edge) edgeQueue.dequeue();
 
-    // // map each vertex to the forest position
-    // Map<Vertex<V>,Position<Vertex<V>>> positions = new ProbeHashMap<>();
+        // Process the dequeued edge
+        Object realVert1 = curEdge.internalVert1;
+        Object realVert2 = curEdge.internalVert2;
 
-    // for (Vertex<V> v : g.vertices())
-    //     positions.put(v, forest.makeCluster(v));
 
-    // for (Edge<Integer> e : g.edges())
-    //     pq.insert(e.getElement(), e);
+        int realInt1 = (int) vertexHashTable.find(realVert1).value();
+        int realInt2 = (int) vertexHashTable.find(realVert2).value();
 
-    // int size = g.numVertices();
-    // // while tree not spanning and unprocessed edges remain...
-    // while (tree.size() != size - 1 && !pq.isEmpty()) {
-    //     Entry<Integer, Edge<Integer>> entry = pq.removeMin();
-    //     Edge<Integer> edge = entry.getValue();
-    //     Vertex<V>[] endpoints = g.endVertices(edge);
-    //     Position<Vertex<V>> a = forest.find(positions.get(endpoints[0]));
-    //     Position<Vertex<V>> b = forest.find(positions.get(endpoints[1]));
-    //     if (a != b) {
-    //         tree.addLast(edge);
-    //         forest.union(a,b);
-    //     }
-    // }
+        // Edge<Integer> edge = entry.getValue();
+          
+        int root1 = forest.find(realInt1);
+        int root2 = forest.find(realInt2);
+
+        if (root1 != root2) {
+          System.out.println("edge added");
+
+          newGraph.addEdge(realVert1, realVert2, curEdge.weight);
+          forest.union(realInt1, realInt2);
+        }
+
+      } catch (QueueEmptyException e) {
+        System.out.println("thrown Exception on empty");
+      }
+    }
 
     return newGraph;
   }
