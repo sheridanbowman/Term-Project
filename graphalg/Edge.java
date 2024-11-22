@@ -13,12 +13,12 @@ public class Edge implements Comparable<Edge> {
     }
     
     //Overrides the default compareTo method in order for the mergesort algorithm to work
-    public int compareTo(Edge edge1, Edge edge2) {
-        if(edge1.weight < edge2.weight) {
+    public int compareTo(Edge otherEdge) {
+        if(this.weight < otherEdge.weight) {
         	return -1;
-        } else if(edge1.weight == edge2.weight) {
+        } else if(this.weight == otherEdge.weight) {
         	return 0;
-        } else if(edge1.weight > edge2.weight) {
+        } else if(this.weight > otherEdge.weight) {
         	return 1;
         }
     }
