@@ -2,6 +2,7 @@
 
 package graphalg;
 
+import dict.HashTableChained;
 import graph.*;
 import list.LinkedQueue;
 import static list.sorts.mergeSort;
@@ -28,29 +29,41 @@ public class Kruskal {
     // real verticies from old graph
     Object[] realVerts = g.getVertices();
 
+    //hashtable to map back and forth from realVerts list : uniqueInt <-> vert
+    HashTableChained vertexHashTable = new HashTableChained();
+
     // unsorted edges init
     LinkedQueue edgeQueue = new LinkedQueue(); 
     
     // for each vertex, check its neighbors, and add those edges to queue
-    for (Object realVert : realVerts) {
+    for (int i = 0; i < realVerts.length; i++) {
+        
+      Object realVert = realVerts[i];
+
       // transfer to vert to result graph, no matter what vertex count will be same
       newGraph.addVertex(realVert);
-      
-      Neighbors vertNeighborWrapper = g.getNeighbors(realVert);
 
+      // add to hashtable too, keep up to date for preventing redundant adds in next inner loop
+      vertexHashTable.insert(realVert, i);
+      
 
       // for each vertex's neighbor, add edge from parent vert + neighbor, weight
       // theres probably a cleaner way to iterate through both lists simultaneously
-      int weightIndex = 0;
+      Neighbors vertNeighborWrapper = g.getNeighbors(realVert);
       int[] vertNeighborWeights = vertNeighborWrapper.weightList;
       Object[] vertNeighborList = vertNeighborWrapper.neighborList;
 
-      for (Object vertNeighbor : vertNeighborList) {
-        Edge newEdge = new Edge(realVert, vertNeighbor, vertNeighborWeights[weightIndex]);
-        
-        edgeQueue.enqueue(newEdge);
+      for (int j = 0; j < vertNeighborWeights.length; j++) {
+          
+        Object vertNeighbor = vertNeighborList[j];
 
-        weightIndex++;
+        // Check against existing hashtable of verts and dont add if it exists
+        // if a vertexNeighbor was already added to newGraph, we don't need to add it again; its been thoroughly added 
+        if (vertexHashTable.find(vertNeighbor) != null) {
+          
+          Edge newEdge = new Edge(realVert, vertNeighbor, vertNeighborWeights[j]);
+          edgeQueue.enqueue(newEdge);
+        }     
       }
     }
 
@@ -60,8 +73,6 @@ public class Kruskal {
 
     // Theoretically have a sorted linkedQueue of edges w. weights, and vertexlist extracted, ready for Kruskal
     // Do the disjoint set stuff here v----v-----v----v
-
-
 
     // tree is where we will store result as it is computed
     // PositionalList<Edge<Integer>> tree = new LinkedPositionalList<>();
