@@ -339,6 +339,7 @@ public class WUGraph {
         secondHalfEdge.setSiblingEdge(firstHalfEdge);
 
         internalVertex_u.edgeList.insertFront(firstHalfEdge);
+        firstHalfEdge.parentDListNode = internalVertex_u.edgeList.front();
         internalVertex_u.degree++;
         // System.out.println("  degree of "+u+" is now "+internalVertex_u.degree);
 
@@ -346,6 +347,7 @@ public class WUGraph {
         if (u.hashCode() != v.hashCode()){
           // System.out.println("  Non-self Edge addition between "+u+" and "+v);
           internalVertex_v.edgeList.insertFront(secondHalfEdge);
+          secondHalfEdge.parentDListNode = internalVertex_v.edgeList.front();
           internalVertex_v.degree++;
           // System.out.println("  degree of "+v+" is now "+internalVertex_v.degree);
           
@@ -385,22 +387,25 @@ public class WUGraph {
     // Check if verticies exist, first
     InternalVertex internalVertex_u = getInternalVertex(u);
     InternalVertex internalVertex_v = getInternalVertex(v);
+    VertexPair vertexPair = new VertexPair(u, v);
 
     // Also, only remove edge if it exists
     if(internalVertex_u != null && internalVertex_v != null && isEdge(u, v)){
       System.out.println("  Removing edge between "+u+" " + v);
+      HalfEdge firstHalfEdge = ((HalfEdge)edgeHashTable.find(vertexPair).value());
 
       // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it
-      internalVertex_u.edgeList.remove(internalVertex_v.parentDlistNode);
+      internalVertex_u.edgeList.remove(firstHalfEdge.getParentDListNode());
       System.out.println("      "+u+"'s edge list length is now "+internalVertex_u.edgeList.length());  
       getNeighbors(u);
       internalVertex_u.degree--;
 
       // Only deduct degree again if it's not a self edge, when u & v are not the same instance
       if (u.hashCode() != v.hashCode()){
+        HalfEdge secondHalfEdge = firstHalfEdge.siblingEdge;
 
         // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it
-        internalVertex_v.edgeList.remove(internalVertex_u.parentDlistNode);
+        internalVertex_v.edgeList.remove(secondHalfEdge.getParentDListNode());
         System.out.println("      "+v+"'s edge list length is now "+internalVertex_v.edgeList.length());  
         getNeighbors(v);
         internalVertex_v.degree--;    
