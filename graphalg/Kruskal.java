@@ -43,7 +43,7 @@ public class Kruskal {
       Object realVert = realVerts[i];
 
       // transfer to vert to result graph, no matter what vertex count will be same
-      newGraph.addVertex(realVert);
+      newGraph.addVertex(realVert);  
 
       // add to hashtable too, keep up to date for preventing redundant adds in next inner loop
       vertexHashTable.insert(realVert, i);
@@ -101,8 +101,8 @@ public class Kruskal {
 
     // System.out.println(Arrays.toString(minEdges));
     // while tree not spanning and unprocessed edges remain...
-    while (newGraph.edgeCount != realVerts.length && !edgeQueue.isEmpty()) {
-      System.out.println("  edge count in new graph is " + newGraph.edgeCount);
+    while (newGraph.edgeCount != realVerts.length-1 && !edgeQueue.isEmpty()) {
+      
       try {
         Edge lowestEdge = (Edge) edgeQueue.dequeue();
 
@@ -112,34 +112,41 @@ public class Kruskal {
 
         // get unique int reps
         int realInt1 = (int) vertexHashTable.find(realVert1).value();
-        int realInt2 = (int) vertexHashTable.find(realVert2).value();
+        int realInt2 = (int) vertexHashTable.find(realVert2).value(); 
       
         System.out.println("    popped edge w. weight " + lowestEdge.weight + " between verts " +realInt1+ " and " +realInt2);
 
-        // Edge<Integer> edge = entry.getValue();
-        if (realInt1 != realInt2){
-          System.out.println("       looking for "+realInt1);
+        // never add a self-edge, in MST it's always redundant
+        if (realInt1 != realInt2){ 
+
+          // System.out.println("       looking for "+realInt1);
           int root1 = forest.find(realInt1);
+          if (root1 < 0){
+            root1 = realInt1; 
+          }
           System.out.println("       root of "+realInt1 + " is " +root1);
-
-          System.out.println("       looking for "+realInt2);
-          int root2 = forest.find(realInt2);
+ 
+          // System.out.println("       looking for "+realInt2); 
+          int root2 = forest.find(realInt2); 
+          if (root2 < 0){
+            root2 = realInt2; 
+          }  
           System.out.println("       root of "+realInt2 + " is " +root2);
-
+ 
           if (root1 != root2) {
+            forest.union(root1, root2);
+            newGraph.addEdge(realVert1, realVert2, lowestEdge.weight);
             System.out.println("   Unequal roots, edge added");
-
-            if (forest.union(realInt1, realInt2)){
-              newGraph.addEdge(realVert1, realVert2, lowestEdge.weight);
-            }
-            
             
           }
-        }
-
+        } 
+ 
       } catch (QueueEmptyException e) {
         System.out.println("   thrown Exception on empty");
       }
+
+      System.out.println("  edge count in new graph is now " + newGraph.edgeCount);
+      System.out.println("  edge queue is " + !edgeQueue.isEmpty());
     }
 
     return newGraph;
