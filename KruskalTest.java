@@ -46,6 +46,7 @@ public class KruskalTest {
         DFSVertex next = (DFSVertex) neigh.neighborList[i];
         if (next.visited) {
           if ((next != current) && (next != prev)) {
+            System.out.println("   tree failed on nextcurr");
             tree = false;
             return;
           }
@@ -76,6 +77,7 @@ public class KruskalTest {
       DFS(t, vertArray[i], null, maxOnPath[i], -MAXINT);
       for (j = 0; j < VERTICES; j++) {
         if (!vertArray[j].visited) {
+          System.out.println("   tree failed on visit");
           tree = false;
         }
       }
@@ -124,30 +126,30 @@ public class KruskalTest {
 
     addRandomEdges(g, vertArray);
 
-//  for (i = 0; i < vertArray.length; i++) {
-//    for (j = 0; j < vertArray.length; j++) {
-//      if (g.isEdge(vertArray[i], vertArray[j])) {
-//        System.out.print(" " + g.weight(vertArray[i], vertArray[j]));
-//      } else {
-//        System.out.print(" *");
-//      }
-//    }
-//    System.out.println();
-//  }
+ for (i = 0; i < vertArray.length; i++) {
+   for (j = 0; j < vertArray.length; j++) {
+     if (g.isEdge(vertArray[i], vertArray[j])) {
+       System.out.print(" " + g.weight(vertArray[i], vertArray[j]));
+     } else {
+       System.out.print(" *");
+     }
+   }
+   System.out.println();
+ }
 
     System.out.println("Finding the minimum spanning tree.");
     t = Kruskal.minSpanTree(g);
 
-//  for (i = 0; i < vertArray.length; i++) {
-//    for (j = 0; j < vertArray.length; j++) {
-//      if (t.isEdge(vertArray[i], vertArray[j])) {
-//        System.out.print(" " + t.weight(vertArray[i], vertArray[j]));
-//      } else {
-//        System.out.print(" *");
-//      }
-//    }
-//    System.out.println();
-//  }
+ for (i = 0; i < vertArray.length; i++) {
+   for (j = 0; j < vertArray.length; j++) {
+     if (t.isEdge(vertArray[i], vertArray[j])) {
+       System.out.print(" " + t.weight(vertArray[i], vertArray[j]));
+     } else {
+       System.out.print(" *");
+     }
+   }
+   System.out.println();
+ }
 
     DFSTest(g, t, vertArray);
 
