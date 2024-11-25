@@ -25,6 +25,7 @@ package graph;
 
 import dict.Entry;
 import dict.HashTableChained;
+import java.util.Arrays;
 import list.DList;
 import list.DListNode;
 
@@ -301,7 +302,10 @@ public class WUGraph {
       // increment and continue
       currentEdgeDLNode = refInternalVertex.edgeList.next(currentEdgeDLNode);
     }
-    // System.out.println("    neighbors to " + vertex + " is "+ Arrays.toString(neighbors.neighborList));
+    System.out.println("    neighbors to " + vertex + " is "+ Arrays.toString(neighbors.neighborList));
+    // for (DFSVertex elem : (DFSVertex[]) neighbors.neighborList) {
+    //    System.out.println(elem.number); 
+    // }
     return neighbors;
     
   }
