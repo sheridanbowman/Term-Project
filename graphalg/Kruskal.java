@@ -101,8 +101,8 @@ public class Kruskal {
 
     // System.out.println(Arrays.toString(minEdges));
     // while tree not spanning and unprocessed edges remain...
-    while (newGraph.edgeCount != realVerts.length - 1 && !edgeQueue.isEmpty()) {
-      System.out.println("  edge count in new graph is " + newGraph.edgeCount);
+    while (newGraph.edgeCount != realVerts.length && !edgeQueue.isEmpty()) {
+      
       try {
         Edge lowestEdge = (Edge) edgeQueue.dequeue();
 
@@ -118,20 +118,29 @@ public class Kruskal {
 
         // Edge<Integer> edge = entry.getValue();
         if (realInt1 != realInt2){
+          System.out.println("       looking for "+realInt1);
           int root1 = forest.find(realInt1);
+          System.out.println("       root of "+realInt1 + " is " +root1);
+
+          System.out.println("       looking for "+realInt2);
           int root2 = forest.find(realInt2);
+          System.out.println("       root of "+realInt2 + " is " +root2);
 
           if (root1 != root2) {
-            System.out.println("   Unequal roots, edge added");
-
-            newGraph.addEdge(realVert1, realVert2, lowestEdge.weight);
-            forest.union(realInt1, realInt2);
+            if (forest.union(realInt1, realInt2)){
+              
+              newGraph.addEdge(realVert1, realVert2, lowestEdge.weight);
+              System.out.println("   Unequal roots, edge added");
+            }
           }
         }
 
       } catch (QueueEmptyException e) {
         System.out.println("   thrown Exception on empty");
       }
+
+      System.out.println("  edge count in new graph is now " + newGraph.edgeCount);
+      System.out.println("  edge queue is " + !edgeQueue.isEmpty());
     }
 
     return newGraph;
