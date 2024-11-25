@@ -42,14 +42,14 @@ public class DisjointSets {
    **/
   public void union(int root1, int root2) {
     if (array[root1] >= 0 || array[root2] >= 0) {
-      throw new IllegalArgumentException("Both vertices must be roots.");
+      return;
   }
 
   // Check if root1 and root2 are not the same
   if (root1 == root2) {
-      throw new IllegalArgumentException("Cannot union a vertex with itself.");
+      return;
   }
-  
+
     if (array[root2] < array[root1]) {                 // root2 has larger tree
       array[root2] += array[root1];        // update # of items in root2's tree
       array[root1] = root2;                              // make root2 new root

@@ -47,6 +47,7 @@ public class KruskalTest {
         if (next.visited) {
           if ((next != current) && (next != prev)) {
             tree = false;
+            System.out.println("here1");
             return;
           }
         } else if (neigh.weightList[i] > maxEdge) {
@@ -124,30 +125,30 @@ public class KruskalTest {
 
     addRandomEdges(g, vertArray);
 
-//  for (i = 0; i < vertArray.length; i++) {
-//    for (j = 0; j < vertArray.length; j++) {
-//      if (g.isEdge(vertArray[i], vertArray[j])) {
-//        System.out.print(" " + g.weight(vertArray[i], vertArray[j]));
-//      } else {
-//        System.out.print(" *");
-//      }
-//    }
-//    System.out.println();
-//  }
+  for (i = 0; i < vertArray.length; i++) {
+    for (j = 0; j < vertArray.length; j++) {
+      if (g.isEdge(vertArray[i], vertArray[j])) {
+        System.out.print(" " + g.weight(vertArray[i], vertArray[j]));
+      } else {
+        System.out.print(" *");
+      }
+    }
+    System.out.println();
+  }
 
     System.out.println("Finding the minimum spanning tree.");
     t = Kruskal.minSpanTree(g);
 
-//  for (i = 0; i < vertArray.length; i++) {
-//    for (j = 0; j < vertArray.length; j++) {
-//      if (t.isEdge(vertArray[i], vertArray[j])) {
-//        System.out.print(" " + t.weight(vertArray[i], vertArray[j]));
-//      } else {
-//        System.out.print(" *");
-//      }
-//    }
-//    System.out.println();
-//  }
+  for (i = 0; i < vertArray.length; i++) {
+    for (j = 0; j < vertArray.length; j++) {
+      if (t.isEdge(vertArray[i], vertArray[j])) {
+        System.out.print(" " + t.weight(vertArray[i], vertArray[j]));
+      } else {
+        System.out.print(" *");
+      }
+    }
+    System.out.println();
+  }
 
     DFSTest(g, t, vertArray);
 
