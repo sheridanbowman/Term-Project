@@ -41,20 +41,24 @@ public class DisjointSets {
    *  @param root2 the root of the other set.
    **/
   public boolean union(int root1, int root2) {
-    /*if (array[root1] >= 0 || array[root2] >= 0) {
-        return false;
-    }
+    // both verts must be roots
+    // if (array[root1] >= 0 || array[root2] >= 0) {
+    //   System.out.println(array[root1]);
+    //   System.out.println(array[root2]);
+    //     return false; 
+    // }
     // Check if root1 and root2 are not the same
-    if (root1 == root2) {
-        return false;
-    }
-    */
+    // if (root1 == root2) {
+    //     return false;
+    // }
     if (array[root2] < array[root1]) {                 // root2 has larger tree
       array[root2] += array[root1];        // update # of items in root2's tree
+      System.out.println(" new root of " + root1+ " is" + root2);
       array[root1] = root2;                              // make root2 new root
       return true;
     } else {                                  // root1 has equal or larger tree
       array[root1] += array[root2];        // update # of items in root1's tree
+      System.out.println(" new root of " + root2+ " is" + root1);
       array[root2] = root1;                              // make root1 new root
       return true;
     }
@@ -72,7 +76,13 @@ public class DisjointSets {
       return x;                         // x is the root of the tree; return it
     } else {
       // Find out who the root is; compress path by making the root x's parent.
+      // System.out.println(x+" wasn't root: checking " + array[x]);
+      if (array[array[x]]==x){
+        // System.out.println("recursion" + x + " " + array[array[x]]);
+        return array[x];
+      }
       array[x] = find(array[x]);
+      // System.out.println(" new root of " + x+ " is" + array[x]);
       return array[x];                                       // Return the root
     }
   }
