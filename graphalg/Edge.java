@@ -1,10 +1,12 @@
 package graphalg;
 
-// non-split instance of edge, pointing to it's real objects
+// internal instance of an edge, pointing to it's real object parents & weight
 public class Edge implements Comparable<Edge> {
-    public int weight;
-    public Object internalVert1;
-    public Object internalVert2; 
+    protected int weight;
+
+    // parent vertices
+    protected Object internalVert1;
+    protected Object internalVert2; 
     
     public Edge(Object u, Object v, int w){
         weight = w;
@@ -12,7 +14,7 @@ public class Edge implements Comparable<Edge> {
         internalVert2 = v;
     }
     
-    //Overrides the default compareTo method in order for the mergesort algorithm to work
+    //Implements comparareTo to enable sorting of Edges by weight
     @Override
     public int compareTo(Edge otherEdge) {
         if (this.weight < otherEdge.weight) {

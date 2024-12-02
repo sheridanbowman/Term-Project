@@ -23,6 +23,7 @@ public class Kruskal {
    * @param g The weighted, undirected graph whose MST we want to compute.
    * @return A newly constructed WUGraph representing the MST of g.
    */
+
   public static WUGraph minSpanTree(WUGraph g) {
 
     // New graph to fill with MST & return
@@ -50,8 +51,8 @@ public class Kruskal {
       
 
       // for each vertex's neighbor, add edge from parent vert + neighbor, weight
-      // theres probably a cleaner way to iterate through both lists simultaneously
       Neighbors vertNeighborWrapper = g.getNeighbors(realVert);
+
       int[] vertNeighborWeights = vertNeighborWrapper.weightList;
       Object[] vertNeighborList = vertNeighborWrapper.neighborList;
 
@@ -70,79 +71,44 @@ public class Kruskal {
     }
 
     //sort the edgequeue by weight
-    // --- ---- this wont work until Edge comparable is implemented
-    System.out.println("edgequeue size is.."+edgeQueue.size());
-    // System.out.println("front before sort is.."+edgeQueue.);
-
-    System.out.println("front before sort is..");
-    for (int i = 1; i < edgeQueue.size(); i++) {
-      System.out.print(" "+((Edge)edgeQueue.nth(i)).weight);
-    }
-
-    System.out.println("");
     mergeSort(edgeQueue);
 
-    // System.out.println("front after sort is.."+edgeQueue.front());
-    System.out.println("front after sort is..");
-    for (int i = 1; i < edgeQueue.size(); i++) {
-      System.out.print(" "+((Edge)edgeQueue.nth(i)).weight);
-    }
-    System.out.println("");
-
-
-    // Edge[] minEdges = new Edge[realVerts.length-1];
-
-    // Theoretically have a sorted linkedQueue of edges w. weights, and vertexlist extracted, ready for Kruskal
-    // Do the disjoint set stuff here v----v-----v----v
 
     DisjointSets forest = new DisjointSets(realVerts.length);
 
-    System.out.println(" target edge count is "+ (realVerts.length-1));
-
-    // System.out.println(Arrays.toString(minEdges));
-    // while tree not spanning and unprocessed edges remain...
-    while (newGraph.edgeCount != realVerts.length-1 && !edgeQueue.isEmpty()) {
+    // while tree not spanning and unprocessed edges remain; keep iterating
+    while (newGraph.edgeCount() != realVerts.length-1 && !edgeQueue.isEmpty()) {
        
       try {
         Edge lowestEdge = (Edge) edgeQueue.dequeue();
 
-        // Process the dequeued edge
+        // get parent verts of lowest edge
         Object realVert1 = lowestEdge.internalVert1;
         Object realVert2 = lowestEdge.internalVert2;
  
-        // get unique int reps
+        // get unique int representations
         int realInt1 = (int) vertexHashTable.find(realVert1).value();
         int realInt2 = (int) vertexHashTable.find(realVert2).value(); 
        
-        System.out.println("    popped edge w. weight " + lowestEdge.weight + " between verts " +realInt1+ " and " +realInt2);
-
         // never add a self-edge, in MST it's always redundant
         if (realInt1 != realInt2){ 
 
-          // System.out.println("       looking for "+realInt1);
+          // get two verticies int roots
           int root1 = forest.find(realInt1);
-
-          System.out.println("       root of "+realInt1 + " is " +root1);
-  
-          // System.out.println("       looking for "+realInt2); 
           int root2 = forest.find(realInt2); 
- 
-          System.out.println("       root of "+realInt2 + " is " +root2);
-  
+
+          // roots are unique, combine sets and add edge
           if (root1 != root2) {
             forest.union(root1, root2);
             newGraph.addEdge(realVert1, realVert2, lowestEdge.weight);
-            System.out.println("   Unequal roots, edge added");
             
           }
         } 
  
       } catch (QueueEmptyException e) {
-        System.out.println("   thrown Exception on empty");
+        break;
       }
 
-      System.out.println("  edge count in new graph is now " + newGraph.edgeCount);
-      System.out.println("  edge queue is " + !edgeQueue.isEmpty());
     }
 
     return newGraph;

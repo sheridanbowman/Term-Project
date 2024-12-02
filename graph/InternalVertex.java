@@ -3,22 +3,20 @@ package graph;
 import list.DList;
 import list.DListNode;
 
-//Internal vertex needs to hold both the real Vertex object, and also a DList containing the edges
+// Internal representation of each WUGraph vertex
 public class InternalVertex {
 
-    //Holds the real vertex object
-	public Object realVertex;               
+    //Holds the real vertex object.
+	protected Object realVertex;               
 
-	//pointer to containing dlist node (saves having to iterate through dlist for deletion)
-	public DListNode parentDlistNode;	
+	//Pointer to containing dlist node (saves having to iterate through dlist for deletion).
+	protected DListNode parentDlistNode;	
 	
-	//Holds all of the edges 
-	public DList edgeList = new DList();    
-
-	// maintained count similar to edgeList.length(), but tallying self-joins correctly
-	public int degree = 0;
+	//Holds all of the edges.
+	protected DList edgeList = new DList();    
 	
-	public InternalVertex(Object vertex) {
+	//Default constructor which assigns the InternalVertex's realVertex.
+	protected InternalVertex(Object vertex) {
 		realVertex = vertex;
 
 	}
