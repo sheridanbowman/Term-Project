@@ -258,7 +258,8 @@ public class WUGraph {
    */
 
   public int degree(Object vertex) {
-   
+      
+	  //Sets internalVertex to the InternalVertex object held inside of vertex.
       InternalVertex internalVertex = getInternalVertex(vertex);
 
       // Break out on fail case on ungraphed vert being queried 
@@ -406,8 +407,6 @@ public class WUGraph {
                   secondHalfEdge.parentDListNode = internalVertex_v.edgeList.front();
                   internalVertex_v.degree++;
           
-              } else {
-                  // System.out.println("  Self Edge addition between "+u+" and "+v);
               }
               
               //We then increment the edgeCount class member and insert the vertexPair alongside the firstHalfEdge.
@@ -422,9 +421,6 @@ public class WUGraph {
 
           }
           
-          //debug
-          getNeighbors(v);
-          getNeighbors(u);
       }
 
   }
@@ -463,7 +459,7 @@ public class WUGraph {
           if (u.hashCode() != v.hashCode()){
               HalfEdge secondHalfEdge = firstHalfEdge.siblingEdge;
 
-              // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it
+              // This needs to be updated, trying to remove an internalVertexDlist pointer from a dlist that doesn't contain it.
               internalVertex_v.edgeList.remove(secondHalfEdge.getParentDListNode());
               getNeighbors(v);
               internalVertex_v.degree--;        
@@ -474,9 +470,7 @@ public class WUGraph {
 
           edgeHashTable.remove(edge);
 
-      } else {
-          // System.out.println("    edge NOT removed between "+u+" and "+v+" - edge or verts not found");   
-      }
+      } 
 
   }
 
